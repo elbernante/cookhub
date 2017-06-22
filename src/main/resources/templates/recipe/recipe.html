@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head> 
+    <title>Cook Hub</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" th:href="@{/}">Spring Social Login</a>
+        </div>
+        <p class="navbar-text navbar-right">
+            <span sec:authentication="name">Username</span> &nbsp; &nbsp; &nbsp;
+            <a th:href="@{/logout}">Logout</a>&nbsp; &nbsp; &nbsp;                
+        </p>
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+	    <h1 class="col-sm-12" th:text="'Hello, ' + ${recipeId} + '!'" >Message here</h1>
+    </div>
+</body>
+</html>

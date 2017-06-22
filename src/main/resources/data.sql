@@ -1,0 +1,1 @@
+insert into user (display_name, username, password) values ('Johnny', 'john', '$2a$10$YMtB.MTj.h9zbujKMvylluKxdIYuMrEkfSyvGgpbsHl0.uGqf5qg6');
