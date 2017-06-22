@@ -10,7 +10,9 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
-@ComponentScan(basePackages={"com.elbernante.cookhub.web"})
+@ComponentScan(basePackages={"com.elbernante.cookhub.service",
+							 "com.elbernante.cookhub.web",
+							 "com.elbernante.cookhub.api"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 	
 	@Bean

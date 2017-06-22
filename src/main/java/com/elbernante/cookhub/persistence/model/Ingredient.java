@@ -17,6 +17,12 @@ public class Ingredient {
 	private String name;
 	
 	public Ingredient() {}
+	
+	public Ingredient(String amount, String unit, String name) {
+		this.amount = amount;
+		this.unit = unit;
+		this.name = name;
+	}
 
 	public long getId() {
 		return id;

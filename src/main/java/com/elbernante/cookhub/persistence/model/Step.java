@@ -17,6 +17,10 @@ public class Step {
 	private String value;
 	
 	public Step() {}
+	
+	public Step(String value) {
+		this.value = value;
+	}
 
 	public long getId() {
 		return id;

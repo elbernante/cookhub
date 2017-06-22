@@ -1,26 +1,89 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org"
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head> 
-    <title>Cook Hub</title> 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-</head>
-<body>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" th:href="@{/}">Spring Social Login</a>
-        </div>
-        <p class="navbar-text navbar-right">
-            <span sec:authentication="name">Username</span> &nbsp; &nbsp; &nbsp;
-            <a th:href="@{/logout}">Logout</a>&nbsp; &nbsp; &nbsp;                
-        </p>
-      </div><!-- /.container-fluid -->
-    </nav>
+  <head th:replace="index::head_tag"></head>
 
-    <div class="container">
-	    <h1 class="col-sm-12" th:text="'Hello, ' + ${recipeId} + '!'" >Message here</h1>
-    </div>
-</body>
+  <body>
+    <nav th:replace="index::navbar" ></nav>
+
+    <div class="container" id="mycontainer">
+        <p>Loading recipe...</p>
+    </div><!-- /.container -->
+
+    <template id="myTemplate">
+        <h2>Recipe Name</h2>
+        <h4>by <span>auther</span></h4>
+        <p class="recip-desc">Description</p>
+        <div class="row">
+            <div class="col-sm-3"><label>Preparation time:</label></div>
+            <div class="col-sm-3 recip-preptime">0 minutes</div>
+            <div class="col-sm-3"><label>Cooking time:</label></div>
+            <div class="col-sm-3 recip-cooktime">0 Minutes</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"><label>Ingredients:</label></div>
+            <div class="col-sm-10"><ul class="recip-ing"></ul></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"><label>Directions:</label></div>
+            <div class="col-sm-10"><ol class="recip-dir"></ol></div>
+        </div>
+        <div class="row recip-buttons">
+        </div>
+    </template>
+
+    <th:block th:include="index::common_scripts"></th:block>
+    <script th:inline="javascript">
+	/*<![CDATA[*/
+	    var recipeId = /*[[${recipeId}]]*/ 0;
+	    var serviceUrl = '/api/recipe/' + recipeId;
+	    var userid = /*[[${userid}]]*/ '0';
+
+	/*]]>*/
+	
+	 $(function() {
+		 var template = $("#myTemplate");
+		 var content = $(template.get(0).content.cloneNode(true));
+		 
+		 console.log("Hello! " + serviceUrl);
+         $.get(serviceUrl)
+          .done(function(data) {
+        	  console.log(data);
+        	  content.find("h2").text(data.name);
+        	  content.find("h4").text("by " + data.author.displayName);
+        	  content.find(".recip-desc").text(data.description);
+        	  content.find(".recip-preptime").text(data.prepTime + " minutes");
+        	  content.find(".recip-cooktime").text(data.cookTime + " minutes");
+        	  
+        	  var ingredientsList =  content.find(".recip-ing");
+        	  data.ingredients.forEach(function(i) {
+        		  $("<li />").text(i.amount + " " + i.unit + " " + i.name).appendTo(ingredientsList);
+        	  });
+        	  
+        	  var stepList =  content.find(".recip-dir");
+        	  data.directions.forEach(function(d) {
+        		  $("<li />").text(d.value).appendTo(stepList);
+        	  });
+        	  
+        	  if(data.author.id == userid) {
+        		  var editButton = $('<div class="col-sm-4"><a class="btn btn-primary btn-block btn-lg" href="/recipe/edit/' + data.id + '"><span class="glyphicon glyphicon-cutlery"></span> Edit</a></div>');
+        		  content.find(".recip-buttons").append(editButton)
+        	  }
+        	  
+        	  var forkButton = $('<div class="col-sm-4"><a class="btn btn-success btn-block btn-lg" href="#"><span class="glyphicon glyphicon-cutlery"></span> Fork</a></div>');
+        	  forkButton.click(function() {
+        		    $(this).find("a").text("Forking...");
+        		    $(this).find("a").addClass("disabled");
+        		    $.get("/api/recipe/fork/" + recipeId).done(function(recip) {
+        		    	window.location.href = "/recipe/edit/" + recip.id; 
+        		    });
+        	  });
+              content.find(".recip-buttons").append(forkButton)
+        	  
+              $("#mycontainer").html(content);
+          });
+     });
+	</script>
+  </body>
 </html>

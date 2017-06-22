@@ -9,18 +9,99 @@
 
 
     <div class="container">
-        <h3>New Recipe</h3>
+        <h2>Recipe</h2>
 		<form class="form-horizontal" action="#" th:action="@{/recipe/new}" th:object="${recipe}" method="post">
+		    <input type="hidden" th:field="*{id}"/>
 			<div class="form-group">
-				<label class="col-sm-2 control-label" th:for="name">Name</label>
-				<div class="col-sm-10">
+				<label class="col-sm-4 control-label" th:for="name">Name</label>
+				<div class="col-sm-8">
 					<input type="text" class="form-control" placeholder="Recipe name" th:field="*{name}" />
 				</div>
 			</div>
-			
+			<div class="form-group form-group-sm">
+                <label class="col-sm-4 control-label" th:for="author">By</label>
+                <div class="col-sm-8">
+                    <input type="hidden" class="form-control" placeholder="0" th:field="*{author}" />
+                    <p class="form-control-static" th:text="*{author.displayName}">Author</p>
+                </div>
+            </div>
 			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-default">Sign in</button>
+                <label class="col-sm-4 control-label" th:for="description">Description</label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" rows="6"  placeholder="Description" th:field="*{description}"></textarea>
+                </div>
+            </div>
+			<div class="form-group">
+                <label class="col-sm-4 control-label" th:for="prepTime">Preparation Time (minutes)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="0" th:field="*{prepTime}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" th:for="cookTime">Cooking Time (minutes)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="0" th:field="*{cookTime}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Ingredients</label>
+                <div class="col-sm-8">
+                    <div class="form-group row" th:unless="${#lists.isEmpty(recipe.ingredients)}">
+                        <div class="col-sm-2">
+                            <label class="control-label">Amount</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">Unit</label>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Name</label>
+                        </div>
+                    </div>
+                    <div class="form-group row" th:each="ing,ingStat : *{ingredients}">
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" placeholder="0" th:field="*{ingredients[__${ingStat.index}__].amount}" />
+                        </div>
+                        <div class="col-sm-2">
+                           <input type="text" class="form-control" placeholder="0" th:field="*{ingredients[__${ingStat.index}__].unit}" />
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" placeholder="0" th:field="*{ingredients[__${ingStat.index}__].name}" />
+                        </div>
+                        <div class="col-sm-1">
+                           <button type="submit" class="btn btn-danger btn-sm" name="removeIngredient" th:value="${ingStat.index}"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+                    </div>
+                    <div class="form-group row" >
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success btn-sm btn-block" name="addIngredient" ><span class="glyphicon glyphicon-plus"></span> Add Ingredient</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Instructions</label>
+				<div class="col-sm-8">
+					<div class="form-group row" th:each="step,stepStat : *{directions}">
+						<div class="col-sm-1">
+							<label class="control-label" th:text="${stepStat.count}">0</label>
+						</div>
+						<div class="col-sm-9">
+							<textarea class="form-control" rows="2" th:field="*{directions[__${stepStat.index}__].value}"></textarea>
+						</div>
+						<div class="col-sm-1">
+                           <button type="submit" class="btn btn-danger btn-sm" name="removeStep" th:value="${stepStat.index}"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+					</div>
+					<div class="form-group row" >
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success btn-sm btn-block" name="addStep" ><span class="glyphicon glyphicon-plus"></span> Add Step</button>
+                        </div>
+                    </div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-4 col-sm-8">
+					<button type="submit" name="save" class="btn btn-primary btn-lg btn-block">Save</button>
 				</div>
 			</div>
 		</form>

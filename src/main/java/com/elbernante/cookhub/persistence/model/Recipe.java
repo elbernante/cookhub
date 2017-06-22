@@ -14,6 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 
+import org.hibernate.annotations.ColumnDefault;
+
+import com.elbernante.cookhub.util.RecipeIdentityJsonSerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 @Entity
 public class Recipe {
 	
@@ -21,7 +28,8 @@ public class Recipe {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private long id;
 	
-	@ManyToOne(optional=false, cascade=CascadeType.PERSIST)
+	@ManyToOne(optional=false)
+	@JsonManagedReference
 	private User author;
 	
 	private String name;
@@ -29,22 +37,28 @@ public class Recipe {
 	@Lob
 	private String description;
 
+	@ColumnDefault("0")
 	private int prepTime;
 	
+	@ColumnDefault("0")
 	private int cookTime;
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
 	@JoinColumn(name="source_recipe_id")
+	@JsonSerialize(using=RecipeIdentityJsonSerializer.class)
 	private Recipe sourceRecipe;
 	
 	@OneToMany(mappedBy="sourceRecipe")
+	@JsonIgnore
 	private List<Recipe> directForks = new ArrayList<>();
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
 	@JoinColumn(name="original_recipe_id")
+	@JsonSerialize(using=RecipeIdentityJsonSerializer.class)
 	private Recipe originalRecipe;
 	
 	@OneToMany(mappedBy="originalRecipe")
+	@JsonIgnore
 	private List<Recipe> forks = new ArrayList<>();
 	
 	@OneToMany(cascade=CascadeType.ALL)
@@ -143,6 +157,14 @@ public class Recipe {
 	public void setIngredients(List<Ingredient> ingredients) {
 		this.ingredients = ingredients;
 	}
+	
+	public boolean addIngredient(Ingredient ingredient) {
+		return ingredients.add(ingredient);
+	}
+	
+	public Ingredient removeIngredient(int index) {
+		return ingredients.remove(index);
+	}
 
 	public List<Step> getDirections() {
 		return directions;
@@ -150,5 +172,13 @@ public class Recipe {
 
 	public void setDirections(List<Step> directions) {
 		this.directions = directions;
+	}
+	
+	public boolean addStep(Step step) {
+		return directions.add(step);
+	}
+	
+	public Step removeStep(int index) {
+		return directions.remove(index);
 	}
 }

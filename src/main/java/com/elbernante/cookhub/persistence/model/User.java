@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class User {
 	
@@ -18,16 +21,20 @@ public class User {
 	private Long id;
 	
 	@Column(unique=true)
+	@JsonIgnore
 	private String username;
 	
 	@Column(unique=true)
+	@JsonIgnore
 	private String facebookId;
 	
+	@JsonIgnore
 	private String password;
 	
 	private String displayName;
 	
 	@OneToMany(mappedBy="author")
+	@JsonBackReference
 	private List<Recipe> recipes = new ArrayList<>();
 	
 	public User() {}
