@@ -1,10 +1,18 @@
 package com.elbernante.cookhub.api;
 
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+import javax.ws.rs.NotAuthorizedException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.elbernante.cookhub.persistence.model.CookHubUserDetails;
@@ -25,8 +33,37 @@ public class RecipeRestController {
 		return recipeService.getRecipe(id);
 	}
 	
-	@GetMapping("/fork/{id}")
-	public Recipe fork(@PathVariable int id, Authentication authentication){
+	@PostMapping(value="/save/{id}")
+	public Recipe saveRecipe(@Valid final Recipe recipe, 
+								    final BindingResult bindingResult,
+								    final Authentication authentication) {
+		
+		CookHubUserDetails userDetails = (CookHubUserDetails) authentication.getPrincipal();
+		if (recipe.getAuthor().getId() != userDetails.getUser().getId()) {
+			throw new NotAuthorizedException(null);
+		}
+		
+		if(bindingResult.hasErrors()) {
+			throw new ValidationException();
+		}
+		
+		return recipeService.saveRecipe(recipe);
+	}
+	
+	@DeleteMapping(value="/delete/{id}")
+	public void deleteRecipe(@RequestParam int id, Authentication authentication) {
+		Recipe recipe = recipeService.getRecipe(id);
+		
+		CookHubUserDetails userDetails = (CookHubUserDetails) authentication.getPrincipal();
+		if (recipe.getAuthor().getId() != userDetails.getUser().getId()) {
+			throw new NotAuthorizedException(null);
+		}
+		
+		recipeService.deleteRecipe(id);
+	}
+	
+	@PostMapping("/fork/{id}")
+	public Recipe fork(@RequestParam int id, Authentication authentication){
 		Recipe recipe = recipeService.getRecipe(id);
 		Recipe forked = new Recipe();
 		
@@ -47,5 +84,7 @@ public class RecipeRestController {
 		forked.setOriginalRecipe(recipe.getOriginalRecipe());
 		return recipeService.saveRecipe(forked);
 	}
+	
+	
 
 }

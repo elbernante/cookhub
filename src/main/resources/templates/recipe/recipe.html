@@ -75,7 +75,7 @@
         	  forkButton.click(function() {
         		    $(this).find("a").text("Forking...");
         		    $(this).find("a").addClass("disabled");
-        		    $.get("/api/recipe/fork/" + recipeId).done(function(recip) {
+        		    $.post("/api/recipe/fork/" + recipeId, {id: recipeId}).done(function(recip) {
         		    	window.location.href = "/recipe/edit/" + recip.id; 
         		    });
         	  });
