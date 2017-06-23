@@ -1,5 +1,7 @@
 package com.elbernante.cookhub.api;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 import javax.ws.rs.NotAuthorizedException;
@@ -19,7 +21,9 @@ import com.elbernante.cookhub.persistence.model.CookHubUserDetails;
 import com.elbernante.cookhub.persistence.model.Ingredient;
 import com.elbernante.cookhub.persistence.model.Recipe;
 import com.elbernante.cookhub.persistence.model.Step;
+import com.elbernante.cookhub.persistence.model.User;
 import com.elbernante.cookhub.service.RecipeService;
+import com.elbernante.cookhub.service.UserService;
 
 @RestController
 @RequestMapping("/api/recipe")
@@ -27,6 +31,9 @@ public class RecipeRestController {
 	
 	@Autowired
 	private RecipeService recipeService;
+	
+	@Autowired
+	private UserService UserService;
 	
 	@GetMapping("/{id}")
 	public Recipe getRecipe(@PathVariable int id) {
@@ -85,6 +92,22 @@ public class RecipeRestController {
 		return recipeService.saveRecipe(forked);
 	}
 	
+	@GetMapping("/featured")
+	public List<Recipe> getFeaturedRecipies() {
+		return recipeService.getFeaturedRecipies();
+	}
 	
+	
+	@GetMapping("/kitchen/me")
+	public List<Recipe> getOwnRecipes(Authentication authentication){
+		CookHubUserDetails userDetails = (CookHubUserDetails) authentication.getPrincipal();
+		return recipeService.getUserRecipies(userDetails.getUser());
+	}
+	
+	@GetMapping("/kitchen/{userid}")
+	public List<Recipe> getUserRecipes(@PathVariable long userid) {
+		User user = UserService.userFindById(userid);
+		return recipeService.getUserRecipies(user);
+	}
 
 }

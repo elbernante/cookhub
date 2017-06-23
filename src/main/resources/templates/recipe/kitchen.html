@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="index::head_tag"></head>
+
+  <body>
+    <nav th:replace="index::navbar" ></nav>
+
+    <div class="container">
+        <div id="loading"><p>Loading recipies...</p></div>
+        <div class="grid">
+            <div class="grid-sizer"></div>            
+        </div>
+    </div>
+    
+    <template id="tile-item">
+        <div class="grid-item">
+           <h4><a>Title</a></h4>
+           <h4><small>by Auther</small></h4>
+           <p>Description</p>
+         </div>
+    </template>
+
+    <th:block th:include="index::common_scripts"></th:block>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        var serviceUrl = /*[[${serviceUrl}]]*/ '/';
+    /*]]>*/
+    
+     $(function() {
+         var template = $("#tile-item");
+         var container = $("div.container");
+         var $grid = $(".grid");
+         
+         $grid.isotope({
+             // options
+             itemSelector: '.grid-item',
+             masonry: {
+                columnWidth: 50,
+                gutter: 10
+             }
+           });
+         
+         $.get(serviceUrl).done(function(data) {
+             $("#loading").hide();
+             console.dir(data);
+             data.forEach(function(r) {
+                 var content = $(template.get(0).content.cloneNode(true));
+                 content.find("a").text(r.name);
+                 content.find("a").attr("href", "/recipe/" + r.id);
+                 content.find("small").text(r.author.displayName);
+                 content.find("p").text(r.description);
+                 $grid.isotope()
+                  .append(content)
+                  .isotope('appended', content)
+                  .isotope('layout');
+             });
+         });
+         
+     });
+    </script>
+  </body>
+</html>

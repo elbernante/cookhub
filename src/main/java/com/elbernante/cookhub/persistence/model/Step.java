@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 @Entity
 public class Step {
 	
@@ -14,6 +16,7 @@ public class Step {
 	private long id;
 	
 	@Lob
+	@NotBlank
 	private String value;
 	
 	public Step() {}

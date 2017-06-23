@@ -5,3 +5,26 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+
+
+.grid-sizer,
+.grid-item { width: 200px;}
+
+.grid-item {
+  height: 200px;
+  background: #e6e5e4;
+  border: 2px solid #b6b5b4;
+  overflow: hidden;
+  float: left;
+  margin: 10px;
+}
+/* .grid-item {
+  float: left;
+  width: 50px;
+  height: 50px;
+  background: #e6e5e4;
+  border: 2px solid #b6b5b4;
+}
+
+.grid-item--width2 { width: 100px; }
+.grid-item--height2 { height: 100px; } */

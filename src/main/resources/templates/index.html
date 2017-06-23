@@ -31,18 +31,7 @@
     <![endif]-->
   </head>
 <body>
-<!--     <nav class="navbar navbar-default">
-	  <div class="container-fluid">
-	    <div class="navbar-header">
-	      <a class="navbar-brand" th:href="@{/}">Spring Social Login</a>
-	    </div>
-	    <p class="navbar-text navbar-right">
-	        <span sec:authentication="name">Username</span> &nbsp; &nbsp; &nbsp;
-	        <a th:href="@{/logout}">Logout</a>&nbsp; &nbsp; &nbsp;                
-	    </p>
-	  </div>/.container-fluid
-    </nav> -->
-    
+
     <nav th:fragment="navbar" class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -56,9 +45,8 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">My Kitchen</a></li>
+            <li class="active"><a href="/recipe/kitchen/me">My Kitchen</a></li>
             <li><a href="#" th:href="@{/recipe/new}">Create Recipe</a></li>
-            <li><a href="#contact">Contact</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
 	        <li><a href="#"><span sec:authentication="principal.user.displayName">Username</span></a></li>
@@ -67,21 +55,71 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+    
+    <!-- Jumbotron -->
+      <div class="jumbotron">
+        <h1>Cook Hub</h1>
+        <p class="lead">Explore, invent, share creative cooking ideas</p>
+      </div>
 
     <div class="container">
-    <h1 class="col-sm-12">Welcome, <span sec:authentication="name">Username</span></h1>
-    <p class="col-sm-12 text-muted" sec:authentication="authorities">User authorities</p>
-    
+        <div id="loading"><p>Loading recipies...</p></div>
+        <div class="grid">
+            <div class="grid-sizer"></div>            
+        </div>
     </div>
     
-    <th:block th:fragment="common_scripts">
+    <template id="tile-item">
+        <div class="grid-item">
+           <h4><a>Title</a></h4>
+           <h5><small><a>by Auther</a></small></h5>
+           <p>Description</p>
+         </div>
+    </template>
+
+
+	<th:block th:fragment="common_scripts">
 	    <!-- Bootstrap core JavaScript
 	    ================================================== -->
 	    <!-- Placed at the end of the document so the pages load faster -->
 	    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
 	    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	    <script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
     </th:block>
+    <script type="text/javascript">
+    $(function() {
+    	var template = $("#tile-item");
+        var container = $("div.container");
+        var $grid = $(".grid");
+    	
+        $grid.isotope({
+    		  // options
+    		  itemSelector: '.grid-item',
+    		  masonry: {
+    			 columnWidth: 50,
+    			 gutter: 10
+    		  }
+    		});
+    	
+    	$.get("/api/recipe/featured").done(function(data) {
+    		$("#loading").hide();
+    		console.dir(data);
+    		data.forEach(function(r) {
+    			var content = $(template.get(0).content.cloneNode(true));
+    			content.find("h4 a").text(r.name);
+    			content.find("h4 a").attr("href", "/recipe/" + r.id);
+    			content.find("small a").text("by " + r.author.displayName);
+    			content.find("small a").attr("href", "/recipe/kitchen/" + r.author.id);
+    			content.find("p").text(r.description);
+    			$grid.isotope()
+    			 .append(content)
+    			 .isotope('appended', content)
+    			 .isotope('layout');
+    		});
+    	});
+    });
+    </script>
 </body>
 </html>

@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 @Entity
 public class Ingredient {
 	
@@ -14,6 +16,8 @@ public class Ingredient {
 	
 	private String amount;
 	private String unit;
+	
+	@NotBlank
 	private String name;
 	
 	public Ingredient() {}

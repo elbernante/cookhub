@@ -40,9 +40,7 @@ public class RecipeController {
 								    final BindingResult bindingResult,
 								    final ModelMap modelMap) {
 		
-		System.out.println("###### Entering saving mode...");
 		if(bindingResult.hasErrors()) {
-			System.out.println("###### Error found");
 			return "recipe/edit_recipe";
 		}
 		
@@ -93,5 +91,17 @@ public class RecipeController {
 		model.addAttribute("recipeId", id);
 		model.addAttribute("userid", authentication.getName());
 		return "recipe/recipe";
+	}
+	
+	@GetMapping("/kitchen/me")
+	public String showMyKitchen(Model model) {
+		model.addAttribute("serviceUrl", "/api/recipe/kitchen/me");
+		return "recipe/kitchen";
+	}
+	
+	@GetMapping("/kitchen/{userid}")
+	public String showMyKitchen(@PathVariable long userid, Model model) {
+		model.addAttribute("serviceUrl", "/api/recipe/kitchen/" + userid);
+		return "recipe/kitchen";
 	}
 }

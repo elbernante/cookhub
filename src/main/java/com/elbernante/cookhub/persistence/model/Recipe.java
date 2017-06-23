@@ -13,8 +13,10 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.elbernante.cookhub.util.RecipeIdentityJsonSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,15 +34,18 @@ public class Recipe {
 	@JsonManagedReference
 	private User author;
 	
+	@NotBlank
 	private String name;
 	
 	@Lob
 	private String description;
 
 	@ColumnDefault("0")
+	@Size(min=0)
 	private int prepTime;
 	
 	@ColumnDefault("0")
+	@Size(min=0)
 	private int cookTime;
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
