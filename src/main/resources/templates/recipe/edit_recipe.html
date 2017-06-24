@@ -58,6 +58,7 @@
                         </div>
                     </div>
                     <div class="form-group row" th:each="ing,ingStat : *{ingredients}">
+                        <input type="hidden" th:field="*{ingredients[__${ingStat.index}__].id}" />
                         <div class="col-sm-2">
                             <input type="text" class="form-control" placeholder="0" th:field="*{ingredients[__${ingStat.index}__].amount}" />
                         </div>
@@ -82,6 +83,7 @@
 				<label class="col-sm-4 control-label">Instructions</label>
 				<div class="col-sm-8">
 					<div class="form-group row" th:each="step,stepStat : *{directions}">
+                        <input type="hidden" th:field="*{directions[__${stepStat.index}__].id}" />
 						<div class="col-sm-1">
 							<label class="control-label" th:text="${stepStat.count}">0</label>
 						</div>

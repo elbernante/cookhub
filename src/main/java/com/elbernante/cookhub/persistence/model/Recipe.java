@@ -13,7 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.NotBlank;
@@ -41,11 +41,11 @@ public class Recipe {
 	private String description;
 
 	@ColumnDefault("0")
-	@Size(min=0)
+	@Min(0)
 	private int prepTime;
 	
 	@ColumnDefault("0")
-	@Size(min=0)
+	@Min(0)
 	private int cookTime;
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
@@ -66,11 +66,13 @@ public class Recipe {
 	@JsonIgnore
 	private List<Recipe> forks = new ArrayList<>();
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+	@JoinColumn(name="recipe_id", nullable=false)
 	private List<Ingredient> ingredients = new ArrayList<>();
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	@OrderColumn(name="sequence")
+	@JoinColumn(name="recipe_id", nullable=false)
 	private List<Step> directions = new ArrayList<>();
 	
 	public Recipe() {}
