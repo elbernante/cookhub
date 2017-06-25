@@ -1,1 +1,3 @@
 # cookhub
+
+Recipe sharing app
