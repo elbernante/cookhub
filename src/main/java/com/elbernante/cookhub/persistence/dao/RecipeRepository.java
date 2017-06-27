@@ -10,7 +10,7 @@ import com.elbernante.cookhub.persistence.model.User;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 	
-	@Query(value="SELECT * FROM recipe WHERE cook_time < 10 LIMIT 20", nativeQuery=true)
+	@Query(value="SELECT * FROM recipe LIMIT 100", nativeQuery=true)
 	List<Recipe> getFeaturedRecipies();
 	
 	@Query("FROM Recipe WHERE author = ?1")
